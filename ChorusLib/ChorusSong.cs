@@ -21,7 +21,7 @@ namespace ChorusLib
         public string Genre { get; set; }
 
         [JsonProperty("year")]
-        public short? Year { get; set; }
+        public string Year { get; set; }
 
         [JsonProperty("charter")]
         public string Charter { get; set; }

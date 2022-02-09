@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -28,6 +29,9 @@ namespace ChorusLib
 
         public async Task<ChorusResults> Search(ChorusQuery query, int from = 0)
         {
+            if(from < 0)
+                throw new ArgumentException("Result offset must be positive.", nameof(from));
+                
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"{ENDPOINT}?query={query}&from={from}");
             HttpResponseMessage response = await httpClient.SendAsync(request);
             string result = await response.Content.ReadAsStringAsync();
