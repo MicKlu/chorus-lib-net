@@ -31,6 +31,24 @@ namespace ChorusLib.Tests
             Assert.AreEqual(20, newChorusResults.Songs.Count);
             Assert.AreNotEqual(chorusResults.Songs[0].Id, newChorusResults.Songs[0].Id);
         }
+
+        [TestMethod]
+        public async Task Latest()
+        {
+            ChorusApi api = ChorusApi.GetInstance();
+            ChorusResults chorusResults = await api.Latest();
+
+            Assert.IsNotNull(chorusResults);
+            Assert.AreEqual(20, chorusResults.Songs.Count);
+        }
+
+        [TestMethod]
+        public void LatestNegativeOffset()
+        {
+            Assert.ThrowsExceptionAsync<ArgumentException>(() => {
+                return ChorusApi.GetInstance().Latest(-1);
+            });
+        }
     }
 
 }

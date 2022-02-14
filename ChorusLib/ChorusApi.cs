@@ -60,6 +60,16 @@ namespace ChorusLib
             return chorusResults;
         }
 
+        public async Task<ChorusResults> Latest(int from = 0)
+        {
+            if(from < 0)
+                throw new ArgumentException("Result offset must be positive.", nameof(from));
+                
+            string result = await SendRequest($"{chorusUrl}/api/latest?from={from}");
+            ChorusResults chorusResults = JsonConvert.DeserializeObject<ChorusResults>(result);
+            return chorusResults;
+        }
+
         public async Task<ChorusResults> Search(ChorusQuery query, int from = 0)
         {
             if(from < 0)
