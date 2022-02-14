@@ -47,6 +47,12 @@ namespace ChorusLib
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<int> Count()
+        {
+            string result = await SendRequest($"{chorusUrl}/api/count");
+            return Int32.Parse(result);
+        }
+
         public async Task<ChorusResults> Search(ChorusQuery query, int from = 0)
         {
             if(from < 0)
