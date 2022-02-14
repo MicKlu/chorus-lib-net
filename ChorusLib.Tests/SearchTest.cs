@@ -44,7 +44,7 @@ namespace ChorusLib.Tests
             ChorusQuery query = new ChorusQuery();
             ChorusResults results = await ChorusApi.GetInstance().Search(query);
             Assert.IsNotNull(results, $"Expected non null result");
-            Assert.IsTrue(results.Songs.Count == 20, $"Expected 20 songs, found {results.Songs.Count}");
+            Assert.AreEqual(20, results.Songs.Count);
         }
 
         [TestMethod]
@@ -53,7 +53,7 @@ namespace ChorusLib.Tests
             ChorusQuery query = new ChorusQuery() { MD5 = "abc" };
             ChorusResults results = await ChorusApi.GetInstance().Search(query);
             Assert.IsNotNull(results, $"Expected non null result");
-            Assert.IsTrue(results.Songs.Count == 0, $"Expected 0 songs, found {results.Songs.Count}");
+            Assert.AreEqual(0, results.Songs.Count);
         }
 
         [TestMethod]

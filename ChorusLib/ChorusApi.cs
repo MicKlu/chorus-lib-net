@@ -10,7 +10,20 @@ namespace ChorusLib
         private static ChorusApi instance;
         private static readonly object instanceLock = new object();
         private HttpClient httpClient;
-        private const string ENDPOINT = "https://chorus.fightthe.pw/api/search";
+        private string chorusUrl = "https://chorus.fightthe.pw";
+
+        public ChorusApi(HttpClient httpClient)
+        {
+            if(httpClient == null)
+                throw new ArgumentNullException(nameof(httpClient));
+
+            this.httpClient = httpClient;
+        }
+
+        public ChorusApi(HttpClient httpClient, string chorusUrl) : this(httpClient)
+        {
+            this.chorusUrl = chorusUrl;
+        }
 
         private ChorusApi()
         {
@@ -27,14 +40,19 @@ namespace ChorusLib
             return instance;
         }
 
+        private async Task<string> SendRequest(string requestUri)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            HttpResponseMessage response = await httpClient.SendAsync(request);
+            return await response.Content.ReadAsStringAsync();
+        }
+
         public async Task<ChorusResults> Search(ChorusQuery query, int from = 0)
         {
             if(from < 0)
                 throw new ArgumentException("Result offset must be positive.", nameof(from));
                 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"{ENDPOINT}?query={query}&from={from}");
-            HttpResponseMessage response = await httpClient.SendAsync(request);
-            string result = await response.Content.ReadAsStringAsync();
+            string result = await SendRequest($"{chorusUrl}/api/search?query={query}&from={from}");
             ChorusResults chorusResults = JsonConvert.DeserializeObject<ChorusResults>(result);
             return chorusResults;
         }
