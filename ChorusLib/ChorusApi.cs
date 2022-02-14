@@ -53,6 +53,13 @@ namespace ChorusLib
             return Int32.Parse(result);
         }
 
+        public async Task<ChorusResults> Random()
+        {
+            string result = await SendRequest($"{chorusUrl}/api/random");
+            ChorusResults chorusResults = JsonConvert.DeserializeObject<ChorusResults>(result);
+            return chorusResults;
+        }
+
         public async Task<ChorusResults> Search(ChorusQuery query, int from = 0)
         {
             if(from < 0)

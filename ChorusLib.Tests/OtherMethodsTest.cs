@@ -15,6 +15,22 @@ namespace ChorusLib.Tests
             int count = await api.Count();
             Assert.IsTrue(count >= 0, $"Expected value 0 or more, but got \"{count}\"");
         }
+
+        [TestMethod]
+        public async Task Random()
+        {
+            ChorusApi api = ChorusApi.GetInstance();
+            ChorusResults chorusResults = await api.Random();
+            
+            Assert.IsNotNull(chorusResults);
+            Assert.AreEqual(20, chorusResults.Songs.Count);
+
+            ChorusResults newChorusResults = await api.Random();
+
+            Assert.IsNotNull(newChorusResults);
+            Assert.AreEqual(20, newChorusResults.Songs.Count);
+            Assert.AreNotEqual(chorusResults.Songs[0].Id, newChorusResults.Songs[0].Id);
+        }
     }
 
 }
