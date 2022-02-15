@@ -1,67 +1,82 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace ChorusLib
 {
     public class ChorusQuery
     {
-        private readonly string[] KEYS = new string[]
-            { "name", "artist", "album", "genre", "charter", "md5" };
+        [ChorusQueryKey("name", Quoted = true)]
+        public string Name { get; set; }
 
-        private Dictionary<string, string> queryData = new Dictionary<string, string>();
+        [ChorusQueryKey("artist", Quoted = true)]
+        public string Artist { get; set; }
+
+        [ChorusQueryKey("album", Quoted = true)]
+        public string Album { get; set; }
+
+        [ChorusQueryKey("genre", Quoted = true)]
+        public string Genre { get; set; }
+
+        [ChorusQueryKey("charter", Quoted = true)]
+        public string Charter { get; set; }
+
+        [ChorusQueryKey("md5")]
+        public string MD5 { get; set; }
+
+        [ChorusQueryKey("hasForced")]
+        public bool? HasForced { get; set; }
         
-        public string Name
-        {
-            get => queryData["name"];
-            set { queryData["name"] = $"\"{value}\""; }
-        }
+        [ChorusQueryKey("hasOpen")]
+        public bool? HasOpen { get; set; }
+        
+        [ChorusQueryKey("hasTap")]
+        public bool? HasTap { get; set; }
+        
+        [ChorusQueryKey("hasSections")]
+        public bool? HasSections { get; set; }
+        
+        [ChorusQueryKey("hasStarPower")]
+        public bool? HasStarPower { get; set; }
+        
+        [ChorusQueryKey("hasSoloSections")]
+        public bool? HasSoloSections { get; set; }
+        
+        [ChorusQueryKey("hasStems")]
+        public bool? HasStems { get; set; }
+        
+        [ChorusQueryKey("hasVideo")]
+        public bool? HasVideo { get; set; }
+        
+        [ChorusQueryKey("hasLyrics")]
+        public bool? HasLyrics { get; set; }
 
-        public string Artist
-        {
-            get => queryData["artist"];
-            set { queryData["artist"] = $"\"{value}\""; }
-        }
-
-        public string Album
-        {
-            get => queryData["album"];
-            set { queryData["album"] = $"\"{value}\""; }
-        }
-
-        public string Genre
-        {
-            get => queryData["genre"];
-            set { queryData["genre"] = $"\"{value}\""; }
-        }
-
-        public string Charter
-        {
-            get => queryData["charter"];
-            set { queryData["charter"] = $"\"{value}\""; }
-        }
-
-        public string MD5
-        {
-            get => queryData["md5"];
-            set { queryData["md5"] = value; }
-        }
-
-        public ChorusQuery()
-        {
-            foreach(string key in KEYS)
-                queryData.Add(key, String.Empty);
-        }
+        public ChorusQuery() { }
 
         public override string ToString()
         {
             List<string> query = new List<string>();
-
-            foreach(KeyValuePair<string, string> pair in queryData)
+            foreach(PropertyInfo prop in this.GetType().GetProperties())
             {
-                if(pair.Value.Length > 0)
-                    query.Add(Uri.EscapeDataString($"{pair.Key}={pair.Value}"));
+                ChorusQueryKeyAttribute attr = prop.GetCustomAttribute<ChorusQueryKeyAttribute>();
+                if(attr == null)
+                    continue;
+                
+                object value = prop.GetValue(this);
+                if(value == null)
+                    continue;
+
+                string queryValue = String.Empty;
+                if(value is string)
+                    queryValue = (string)value;
+                else if(value is bool)
+                    queryValue = (bool)value ? "1" : "0";
+
+                if(attr.Quoted)
+                    queryValue = $"\"{queryValue}\"";
+
+                query.Add(Uri.EscapeDataString($"{attr.Key}={queryValue}"));
             }
-            
             return String.Join(" ", query);
         }
     }

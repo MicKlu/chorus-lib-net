@@ -14,6 +14,7 @@ namespace ChorusLib.Tests
         {
             ChorusApi api = ChorusApi.GetInstance();
             ChorusResults results = await api.Search(new ChorusQuery());
+            Assert.IsNotNull(results, $"Expected non null result");
             Assert.AreEqual(20, results.Songs.Count);
         }
 
@@ -23,6 +24,7 @@ namespace ChorusLib.Tests
             HttpClient httpClient = new HttpClient();
             ChorusApi api = new ChorusApi(httpClient);
             ChorusResults results = await api.Search(new ChorusQuery());
+            Assert.IsNotNull(results, $"Expected non null result");
             Assert.AreEqual(20, results.Songs.Count);
         }
 
@@ -40,6 +42,7 @@ namespace ChorusLib.Tests
             HttpClient httpClient = new HttpClient();
             ChorusApi api = new ChorusApi(httpClient, "https://chorus.fightthe.pw");
             ChorusResults results = await api.Search(new ChorusQuery());
+            Assert.IsNotNull(results, $"Expected non null result");
             Assert.AreEqual(20, results.Songs.Count);
         }
 

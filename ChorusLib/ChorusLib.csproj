@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
-    <Version>0.9.0.0</Version>
+    <Version>0.10.0.0</Version>
     <Authors>MGRINZ</Authors>
     <Description>.NET library for searching songs in chorus database</Description>
     <Copyright>Copyright © 2022 MGRINZ</Copyright>

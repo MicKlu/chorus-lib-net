@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ChorusLib.Tests
@@ -32,7 +33,6 @@ namespace ChorusLib.Tests
             {
                 query.Artist = artist;
                 ChorusResults results = await ChorusApi.GetInstance().Search(query);
-
                 Assert.IsNotNull(results, $"Expected non null result for \"{artist}\"");
                 Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 \"{artist}\"");
             }
@@ -63,6 +63,32 @@ namespace ChorusLib.Tests
             Assert.ThrowsExceptionAsync<ArgumentException>(() => {
                 return ChorusApi.GetInstance().Search(query, -1);
             });
+        }
+
+        [TestMethod]
+        public async Task SearchForOpenNotes()
+        {
+            ChorusQuery query = new ChorusQuery();
+            
+            query.HasOpen = true;
+            ChorusResults results = await ChorusApi.GetInstance().Search(query);
+            Assert.IsNotNull(results, $"Expected non null result");
+            Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 song");
+
+            ChorusSongHasOpen hasOpen = results.Songs[0].HasOpen;
+            Assert.IsTrue(hasOpen.GetType().GetProperties().Any(p => {
+                return (bool)p.GetValue(hasOpen) == true;
+            }), "Expected any property of ChorusSongHasOpen to be True");
+
+            query.HasOpen = false;
+            results = await ChorusApi.GetInstance().Search(query);
+            Assert.IsNotNull(results, $"Expected non null result");
+            Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 song");
+            hasOpen = results.Songs[0].HasOpen;
+
+            Assert.IsTrue(hasOpen.GetType().GetProperties().All(p => {
+                return (bool)p.GetValue(hasOpen) == false;
+            }), "Expected all properties of ChorusSongHasOpen to be False");
         }
     }
 
