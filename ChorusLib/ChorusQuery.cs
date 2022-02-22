@@ -51,6 +51,27 @@ namespace ChorusLib
         [ChorusQueryKey("tier_bassghl")]
         public ChorusQueryTier TierBassGHL { get; set; }
 
+        [ChorusQueryKey("diff_guitar")]
+        public ChorusQueryDifficulty DiffGuitar { get; set; }
+
+        [ChorusQueryKey("diff_bass")]
+        public ChorusQueryDifficulty DiffBass { get; set; }
+
+        [ChorusQueryKey("diff_rhythm")]
+        public ChorusQueryDifficulty DiffRhythm { get; set; }
+
+        [ChorusQueryKey("diff_drums")]
+        public ChorusQueryDifficulty DiffDrums { get; set; }
+
+        [ChorusQueryKey("diff_keys")]
+        public ChorusQueryDifficulty DiffKeys { get; set; }
+
+        [ChorusQueryKey("diff_guitarghl")]
+        public ChorusQueryDifficulty DiffGuitarGHL { get; set; }
+
+        [ChorusQueryKey("diff_bassghl")]
+        public ChorusQueryDifficulty DiffBassGHL { get; set; }
+
         [ChorusQueryKey("hasForced")]
         public bool? HasForced { get; set; }
         
@@ -98,6 +119,8 @@ namespace ChorusLib
                     queryValue = value.ToString();
                 else if(value is bool)
                     queryValue = (bool)value ? "1" : "0";
+                else if(value is ChorusQueryDifficulty)
+                    queryValue = $"{(int)((ChorusQueryDifficulty)value).Difficulty}";
 
                 if(attr.Quoted)
                     queryValue = $"\"{queryValue}\"";

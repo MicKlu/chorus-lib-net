@@ -98,7 +98,7 @@ namespace ChorusLib.Tests
             ChorusResults results = await ChorusApi.GetInstance().Search(query);
             Assert.IsNotNull(results, $"Expected non null result");
             Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 song");
-            Assert.IsTrue(results.Songs[0].TierGuitar >= 5, $"Expected song with difficulty 5 or higher but got {results.Songs[0].TierGuitar}");
+            Assert.IsTrue(results.Songs[0].TierGuitar >= 5, $"Expected song with tier difficulty 5 or higher but got {results.Songs[0].TierGuitar}");
         }
 
         [TestMethod]
@@ -114,6 +114,55 @@ namespace ChorusLib.Tests
         
             Assert.ThrowsException<ArgumentException>(() => {
                 new ChorusQueryTier(ChorusQueryTier.GT, -1);
+            });
+        }
+
+        [TestMethod]
+        public async Task SearchForExpertSongs()
+        {
+            ChorusQuery query = new ChorusQuery() { DiffGuitar = new ChorusQueryDifficulty(Difficulty.Expert) };
+            ChorusResults results = await ChorusApi.GetInstance().Search(query);
+            Assert.IsNotNull(results, $"Expected non null result");
+            Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 song");
+            Assert.IsTrue(results.Songs[0].DiffGuitar >= (int)Difficulty.Expert, $"Expected song with difficulty 8 (Expert only) or higher (at least Expert) but got {results.Songs[0].DiffGuitar}");
+        }
+
+        [TestMethod]
+        public async Task SearchForHardAndExpertSongs()
+        {
+            ChorusQuery query = new ChorusQuery() { DiffGuitar = new ChorusQueryDifficulty(Difficulty.Hard | Difficulty.Expert) };
+            ChorusResults results = await ChorusApi.GetInstance().Search(query);
+            Assert.IsNotNull(results, $"Expected non null result");
+            Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 song");
+            Assert.IsTrue(results.Songs[0].DiffGuitar >= (int)(Difficulty.Hard | Difficulty.Expert), $"Expected song with difficulty 12 (Hard and Expert only) or higher (at least Hard and Expert) but got {results.Songs[0].DiffGuitar}");
+
+            // The same but with the other constructor
+            query.DiffGuitar = new ChorusQueryDifficulty(false, false, true, true);
+            results = await ChorusApi.GetInstance().Search(query);
+            Assert.IsNotNull(results, $"Expected non null result");
+            Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 song");
+            Assert.IsTrue(results.Songs[0].DiffGuitar >= (int)(Difficulty.Hard | Difficulty.Expert), $"Expected song with difficulty 12 (Hard and Expert only) or higher (at least Hard and Expert) but got {results.Songs[0].DiffGuitar}");
+        }
+
+        [TestMethod]
+        public async Task SearchForAllDiffSongs()
+        {
+            ChorusQuery query = new ChorusQuery() { DiffGuitar = new ChorusQueryDifficulty(Difficulty.All) };
+            ChorusResults results = await ChorusApi.GetInstance().Search(query);
+            Assert.IsNotNull(results, $"Expected non null result");
+            Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 song");
+            Assert.IsTrue(results.Songs[0].DiffGuitar == (int)Difficulty.All, $"Expected song with difficulty 15 (All difficulties) but got {results.Songs[0].DiffGuitar}");
+        }
+
+        [TestMethod]
+        public void DifficultyArgumentIncorrect()
+        {
+            Assert.ThrowsException<ArgumentException>(() => {
+                new ChorusQueryDifficulty((Difficulty)(-1));
+            });
+
+            Assert.ThrowsException<ArgumentException>(() => {
+                new ChorusQueryDifficulty((Difficulty)(16));
             });
         }
     }
