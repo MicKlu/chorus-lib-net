@@ -23,6 +23,33 @@ namespace ChorusLib
 
         [ChorusQueryKey("md5")]
         public string MD5 { get; set; }
+        
+        [ChorusQueryKey("tier_band")]
+        public ChorusQueryTier TierBand { get; set; }
+        
+        [ChorusQueryKey("tier_guitar")]
+        public ChorusQueryTier TierGuitar { get; set; }
+        
+        [ChorusQueryKey("tier_bass")]
+        public ChorusQueryTier TierBass { get; set; }
+        
+        [ChorusQueryKey("tier_rhythm")]
+        public ChorusQueryTier TierRhythm { get; set; }
+        
+        [ChorusQueryKey("tier_drums")]
+        public ChorusQueryTier TierDrums { get; set; }
+        
+        [ChorusQueryKey("tier_vocals")]
+        public ChorusQueryTier TierVocals { get; set; }
+        
+        [ChorusQueryKey("tier_keys")]
+        public ChorusQueryTier TierKeys { get; set; }
+        
+        [ChorusQueryKey("tier_guitarghl")]
+        public ChorusQueryTier TierGuitarGHL { get; set; }
+        
+        [ChorusQueryKey("tier_bassghl")]
+        public ChorusQueryTier TierBassGHL { get; set; }
 
         [ChorusQueryKey("hasForced")]
         public bool? HasForced { get; set; }
@@ -67,8 +94,8 @@ namespace ChorusLib
                     continue;
 
                 string queryValue = String.Empty;
-                if(value is string)
-                    queryValue = (string)value;
+                if(value is string || value is ChorusQueryTier)
+                    queryValue = value.ToString();
                 else if(value is bool)
                     queryValue = (bool)value ? "1" : "0";
 

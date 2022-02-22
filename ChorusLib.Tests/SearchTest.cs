@@ -90,6 +90,32 @@ namespace ChorusLib.Tests
                 return (bool)p.GetValue(hasOpen) == false;
             }), "Expected all properties of ChorusSongHasOpen to be False");
         }
+
+        [TestMethod]
+        public async Task SearchForDifficultSongs()
+        {
+            ChorusQuery query = new ChorusQuery() { TierGuitar = new ChorusQueryTier(ChorusQueryTier.GT, 5) };
+            ChorusResults results = await ChorusApi.GetInstance().Search(query);
+            Assert.IsNotNull(results, $"Expected non null result");
+            Assert.IsTrue(results.Songs.Count > 0, $"Expected to find at least 1 song");
+            Assert.IsTrue(results.Songs[0].TierGuitar >= 5, $"Expected song with difficulty 5 or higher but got {results.Songs[0].TierGuitar}");
+        }
+
+        [TestMethod]
+        public void TierArgumentsIncorrect()
+        {
+            Assert.ThrowsException<ArgumentException>(() => {
+                new ChorusQueryTier("", 5);
+            });
+        
+            Assert.ThrowsException<ArgumentException>(() => {
+                new ChorusQueryTier(ChorusQueryTier.GT, 7);
+            });
+        
+            Assert.ThrowsException<ArgumentException>(() => {
+                new ChorusQueryTier(ChorusQueryTier.GT, -1);
+            });
+        }
     }
 
 }
